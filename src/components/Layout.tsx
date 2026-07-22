@@ -1,5 +1,5 @@
 import { Link, Outlet, useLocation } from 'react-router-dom'
-import { Home, MessageSquare, FileCheck2, PieChart, Bell, Search, User } from 'lucide-react'
+import { Home, Building2, Bell, Search, LogOut } from 'lucide-react'
 import {
   SidebarProvider,
   Sidebar,
@@ -10,26 +10,19 @@ import {
   SidebarMenuButton,
   SidebarTrigger,
 } from '@/components/ui/sidebar'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { useAuth } from '@/hooks/use-auth'
 
 const navItems = [
   { path: '/', label: 'Dashboard', icon: Home },
-  { path: '/atendimentos', label: 'Atendimentos', icon: MessageSquare },
-  { path: '/pendencias', label: 'Pendências', icon: FileCheck2 },
-  { path: '/fechamento', label: 'Fechamento & Relatórios', icon: PieChart },
+  { path: '/clientes', label: 'Clientes', icon: Building2 },
 ]
 
 export default function Layout() {
   const location = useLocation()
+  const { user, signOut } = useAuth()
 
   return (
     <SidebarProvider>
@@ -37,10 +30,10 @@ export default function Layout() {
         <Sidebar variant="sidebar" className="border-r-0 shadow-lg">
           <SidebarHeader className="p-4 border-b border-sidebar-border/30">
             <div className="flex items-center gap-3 font-bold text-lg text-sidebar-foreground">
-              <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center text-xl shadow-inner">
-                S
+              <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center text-sm shadow-inner">
+                MB
               </div>
-              <span className="tracking-tight">Skip Contábil</span>
+              <span className="tracking-tight">MB Contábil</span>
             </div>
           </SidebarHeader>
           <SidebarContent className="p-2 pt-6 gap-1">
@@ -67,34 +60,38 @@ export default function Layout() {
           <header className="h-16 flex items-center justify-between px-6 bg-white border-b border-slate-200 sticky top-0 z-20">
             <div className="flex items-center gap-4">
               <SidebarTrigger className="text-slate-500 hover:text-slate-900" />
-              <div className="hidden md:block w-px h-6 bg-slate-200 mx-2" />
-              <Select defaultValue="acme">
-                <SelectTrigger className="w-[200px] border-none bg-transparent shadow-none focus:ring-0 font-semibold text-slate-800">
-                  <SelectValue placeholder="Selecione a empresa" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="acme">Acme Corp LTDA</SelectItem>
-                  <SelectItem value="stark">Stark Industries</SelectItem>
-                </SelectContent>
-              </Select>
             </div>
-
             <div className="flex items-center gap-4">
               <div className="relative hidden lg:block">
                 <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                <Input
-                  placeholder="Buscar tickets ou docs..."
-                  className="pl-9 w-64 bg-slate-50 border-slate-200 focus-visible:ring-primary"
-                />
+                <Input placeholder="Buscar..." className="pl-9 w-64 bg-slate-50 border-slate-200" />
               </div>
               <Button variant="ghost" size="icon" className="relative text-slate-500">
                 <Bell className="w-5 h-5" />
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-destructive rounded-full" />
               </Button>
-              <Avatar className="h-9 w-9 border border-slate-200">
-                <AvatarImage src="https://img.usecurling.com/ppl/thumbnail?gender=female&seed=1" />
-                <AvatarFallback>JD</AvatarFallback>
-              </Avatar>
+              <div className="flex items-center gap-2">
+                <Avatar className="h-9 w-9 border border-slate-200">
+                  <AvatarImage
+                    src={
+                      user?.avatar
+                        ? `${import.meta.env.VITE_POCKETBASE_URL}/api/files/users/${user.id}/${user.avatar}`
+                        : undefined
+                    }
+                  />
+                  <AvatarFallback>{user?.name?.charAt(0) || 'U'}</AvatarFallback>
+                </Avatar>
+                <span className="text-sm font-medium text-slate-700 hidden md:block">
+                  {user?.name || 'Usuário'}
+                </span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={signOut}
+                  className="text-slate-500 hover:text-destructive"
+                >
+                  <LogOut className="w-4 h-4" />
+                </Button>
+              </div>
             </div>
           </header>
 

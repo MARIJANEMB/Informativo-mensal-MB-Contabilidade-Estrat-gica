@@ -123,4 +123,18 @@
   .animate-slide-up {
     animation: slide-up 0.5s ease-out forwards;
   }
+
+  @media print {
+    .no-print {
+      display: none !important;
+    }
+    .print-page {
+      box-shadow: none !important;
+      border: none !important;
+      padding: 0 !important;
+    }
+    body {
+      background: white !important;
+    }
+  }
 }
