@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-22T20:54:06.415Z",
+  "generatedAt": "2026-07-22T21:01:33.612Z",
   "collections": [
     {
       "name": "users",
@@ -235,6 +235,82 @@
       ],
       "indexes": [
         "CREATE INDEX idx_tax_obligations_client ON tax_obligations (client, year, month)"
+      ]
+    },
+    {
+      "name": "document_obligations",
+      "type": "base",
+      "apiRules": {
+        "list": "@request.auth.id != ''",
+        "view": "@request.auth.id != ''",
+        "create": "@request.auth.id != ''",
+        "update": "@request.auth.id != ''",
+        "delete": "@request.auth.id != ''"
+      },
+      "fields": [
+        {
+          "name": "client",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "clients"
+        },
+        {
+          "name": "month",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "year",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "document_type",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": ["XML", "Extrato", "Comprovante de Pagamento", "Outros"]
+        },
+        {
+          "name": "status",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": ["Pendente", "Recebido", "Não Necessário"]
+        },
+        {
+          "name": "proof",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "observations",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": [
+        "CREATE INDEX idx_document_obligations_client ON document_obligations (client)",
+        "CREATE INDEX idx_document_obligations_client_month_year ON document_obligations (client, month, year)"
       ]
     }
   ]

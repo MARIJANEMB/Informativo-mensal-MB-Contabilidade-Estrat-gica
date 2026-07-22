@@ -14,6 +14,7 @@ import { ArrowLeft, FileBarChart2 } from 'lucide-react'
 import { getClient, type Client } from '@/services/clients'
 import { MonthlyDataForm } from '@/components/MonthlyDataForm'
 import { TaxObligationList } from '@/components/TaxObligationList'
+import { DocumentObligationList } from '@/components/DocumentObligationList'
 
 const MONTHS = [
   'Janeiro',
@@ -99,8 +100,9 @@ export default function ClientProfile() {
       </Card>
       <Tabs defaultValue="data">
         <TabsList>
-          <TabsTrigger value="data">Dados Mensais</TabsTrigger>
+          <TabsTrigger value="data">Entradas</TabsTrigger>
           <TabsTrigger value="obligations">Obrigações Fiscais</TabsTrigger>
+          <TabsTrigger value="documents">Documentos</TabsTrigger>
           <TabsTrigger value="reports">Relatórios</TabsTrigger>
         </TabsList>
         <TabsContent value="data" className="mt-6">
@@ -114,6 +116,13 @@ export default function ClientProfile() {
           <Card className="shadow-sm">
             <CardContent className="p-0">
               <TaxObligationList clientId={clientId!} month={month} year={year} />
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="documents" className="mt-6">
+          <Card className="shadow-sm">
+            <CardContent className="p-6">
+              <DocumentObligationList clientId={clientId!} month={month} year={year} />
             </CardContent>
           </Card>
         </TabsContent>
