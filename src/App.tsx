@@ -5,6 +5,7 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import { AppStoreProvider } from '@/stores/use-app-store'
 
 import Layout from './components/Layout'
+import { ErrorBoundary } from './components/ErrorBoundary'
 import NotFound from './pages/NotFound'
 import Index from './pages/Index'
 import ServiceLog from './pages/ServiceLog'
@@ -19,10 +20,38 @@ const App = () => (
         <Sonner />
         <Routes>
           <Route element={<Layout />}>
-            <Route path="/" element={<Index />} />
-            <Route path="/atendimentos" element={<ServiceLog />} />
-            <Route path="/pendencias" element={<Pendencies />} />
-            <Route path="/fechamento" element={<Closing />} />
+            <Route
+              path="/"
+              element={
+                <ErrorBoundary>
+                  <Index />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path="/atendimentos"
+              element={
+                <ErrorBoundary>
+                  <ServiceLog />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path="/pendencias"
+              element={
+                <ErrorBoundary>
+                  <Pendencies />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path="/fechamento"
+              element={
+                <ErrorBoundary>
+                  <Closing />
+                </ErrorBoundary>
+              }
+            />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
