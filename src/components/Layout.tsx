@@ -1,5 +1,22 @@
+import { useState, useEffect } from 'react'
 import { Link, Outlet, useLocation } from 'react-router-dom'
-import { Home, Building2, Users, Bell, Search, LogOut } from 'lucide-react'
+import {
+  LayoutDashboard,
+  Briefcase,
+  Calculator,
+  Receipt,
+  ChevronRight,
+  Users,
+  Settings as SettingsIcon,
+  Building2,
+  FileText,
+  ClipboardList,
+  Sparkles,
+  Search,
+  Bell,
+  LogOut,
+} from 'lucide-react'
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui/collapsible'
 import {
   SidebarProvider,
   Sidebar,
@@ -8,22 +25,96 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
+  SidebarMenuSubButton,
   SidebarTrigger,
 } from '@/components/ui/sidebar'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useAuth } from '@/hooks/use-auth'
+import { useSettings } from '@/hooks/use-settings'
+import { usePermissions } from '@/hooks/use-permissions'
+import type { ModuleName } from '@/lib/permissions'
+import defaultLogoUrl from '@/assets/sem-nome-200-x-200-px-apresentacao202604291108480000-4abee.jpg'
+import { cn } from '@/lib/utils'
 
-const navItems = [
-  { path: '/', label: 'Dashboard', icon: Home },
-  { path: '/colaboradores', label: 'Colaboradores', icon: Users },
-  { path: '/clientes', label: 'Clientes', icon: Building2 },
+interface SubItem {
+  path: string
+  label: string
+  icon: typeof Users
+}
+
+interface ModuleSection {
+  id: ModuleName
+  label: string
+  icon: typeof Briefcase
+  pathPrefix: string
+  items: SubItem[]
+}
+
+const moduleSections: ModuleSection[] = [
+  {
+    id: 'admin',
+    label: 'Administrativo',
+    icon: Briefcase,
+    pathPrefix: '/admin',
+    items: [
+      { path: '/admin/colaboradores', label: 'Colaboradores', icon: Users },
+      { path: '/admin/configuracoes', label: 'Configurações', icon: SettingsIcon },
+    ],
+  },
+  {
+    id: 'contabil',
+    label: 'Contábil',
+    icon: Calculator,
+    pathPrefix: '/contabil',
+    items: [
+      { path: '/contabil/clientes', label: 'Clientes', icon: Building2 },
+      { path: '/contabil/documentos', label: 'Documentos', icon: FileText },
+    ],
+  },
+  {
+    id: 'fiscal',
+    label: 'Fiscal',
+    icon: Receipt,
+    pathPrefix: '/fiscal',
+    items: [
+      { path: '/fiscal/obrigacoes', label: 'Obrigações Fiscais', icon: ClipboardList },
+      { path: '/fiscal/relatorios', label: 'Diagnóstico', icon: Sparkles },
+    ],
+  },
 ]
+
+function getModuleFromPath(pathname: string): string | null {
+  for (const section of moduleSections) {
+    if (pathname.startsWith(section.pathPrefix)) return section.id
+  }
+  return null
+}
+
+function isPathActive(pathname: string, itemPath: string): boolean {
+  return pathname === itemPath || pathname.startsWith(itemPath + '/')
+}
 
 export default function Layout() {
   const location = useLocation()
   const { user, signOut } = useAuth()
+  const { logoUrl } = useSettings()
+  const { hasAccess } = usePermissions()
+  const [expanded, setExpanded] = useState<string | null>(getModuleFromPath(location.pathname))
+
+  useEffect(() => {
+    const mod = getModuleFromPath(location.pathname)
+    if (mod) setExpanded(mod)
+  }, [location.pathname])
+
+  const toggleSection = (id: string) => {
+    setExpanded((prev) => (prev === id ? null : id))
+  }
+
+  const visibleSections = moduleSections.filter((s) => hasAccess(s.id))
 
   return (
     <SidebarProvider>
@@ -31,27 +122,73 @@ export default function Layout() {
         <Sidebar variant="sidebar" className="border-r-0 shadow-lg">
           <SidebarHeader className="p-4 border-b border-sidebar-border/30">
             <div className="flex items-center gap-3 font-bold text-lg text-sidebar-foreground">
-              <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center text-sm shadow-inner">
-                MB
+              <div className="w-10 h-10 flex items-center justify-center overflow-hidden">
+                <img
+                  src={logoUrl || defaultLogoUrl}
+                  alt="MB Contábil"
+                  className="w-full h-full object-contain"
+                />
               </div>
               <span className="tracking-tight">MB Contábil</span>
             </div>
           </SidebarHeader>
           <SidebarContent className="p-2 pt-6 gap-1">
             <SidebarMenu>
-              {navItems.map((item) => (
-                <SidebarMenuItem key={item.path}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={location.pathname === item.path}
-                    className="transition-all duration-200 py-5"
-                  >
-                    <Link to={item.path} className="flex items-center gap-3">
-                      <item.icon className="w-5 h-5" />
-                      <span className="font-medium text-[15px]">{item.label}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
+              {/* Painel Central */}
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={location.pathname === '/'}
+                  className="transition-all duration-200 py-5"
+                >
+                  <Link to="/" className="flex items-center gap-3">
+                    <LayoutDashboard className="w-5 h-5" />
+                    <span className="font-medium text-[15px]">Painel Central</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
+              {/* Module Sections */}
+              {visibleSections.map((section) => (
+                <Collapsible
+                  key={section.id}
+                  open={expanded === section.id}
+                  onOpenChange={(open) => toggleSection(section.id)}
+                >
+                  <SidebarMenuItem>
+                    <CollapsibleTrigger asChild>
+                      <SidebarMenuButton className="transition-all duration-200 py-5 w-full">
+                        <section.icon className="w-5 h-5" />
+                        <span className="font-medium text-[15px] flex-1 text-left">
+                          {section.label}
+                        </span>
+                        <ChevronRight
+                          className={cn(
+                            'w-4 h-4 transition-transform duration-200',
+                            expanded === section.id && 'rotate-90',
+                          )}
+                        />
+                      </SidebarMenuButton>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent>
+                      <SidebarMenuSub>
+                        {section.items.map((item) => (
+                          <SidebarMenuSubItem key={item.path}>
+                            <SidebarMenuSubButton
+                              asChild
+                              isActive={isPathActive(location.pathname, item.path)}
+                            >
+                              <Link to={item.path} className="flex items-center gap-3">
+                                <item.icon className="w-4 h-4" />
+                                <span>{item.label}</span>
+                              </Link>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                        ))}
+                      </SidebarMenuSub>
+                    </CollapsibleContent>
+                  </SidebarMenuItem>
+                </Collapsible>
               ))}
             </SidebarMenu>
           </SidebarContent>

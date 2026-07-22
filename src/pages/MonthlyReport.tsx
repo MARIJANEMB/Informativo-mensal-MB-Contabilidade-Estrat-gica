@@ -94,6 +94,7 @@ export default function MonthlyReport() {
     try {
       const result = (await generateDiagnosis(clientId, month, year)) as unknown as DiagnosisResult
       setDiagnosis(result)
+      localStorage.setItem('lastDiagnosisDate', new Date().toISOString())
     } catch (err: any) {
       setDiagnosis({
         diagnosis: 'Não foi possível gerar o diagnóstico. Tente novamente.',

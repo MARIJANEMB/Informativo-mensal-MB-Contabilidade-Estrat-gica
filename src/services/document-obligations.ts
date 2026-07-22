@@ -29,6 +29,11 @@ export const getDocumentObligations = (clientId: string, month: number, year: nu
     filter: `client = "${clientId}" && month = ${month} && year = ${year}`,
   })
 
+export const getAllDocumentObligations = (month: number, year: number) =>
+  pb.collection('document_obligations').getFullList({
+    filter: `month = ${month} && year = ${year}`,
+  })
+
 export const createDocumentObligation = (data: Partial<DocumentObligation>) =>
   pb.collection('document_obligations').create(data)
 

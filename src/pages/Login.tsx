@@ -6,9 +6,12 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Lock, Mail } from 'lucide-react'
+import { useSettings } from '@/hooks/use-settings'
+import defaultLogoUrl from '@/assets/sem-nome-200-x-200-px-apresentacao202604291108480000-4abee.jpg'
 
 export default function Login() {
   const { signIn } = useAuth()
+  const { logoUrl } = useSettings()
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -32,8 +35,12 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
       <Card className="w-full max-w-md shadow-xl">
         <CardHeader className="text-center">
-          <div className="w-14 h-14 rounded-xl bg-primary text-primary-foreground flex items-center justify-center text-xl font-bold mx-auto mb-3">
-            MB
+          <div className="w-24 h-24 mx-auto mb-4 flex items-center justify-center overflow-hidden bg-transparent">
+            <img
+              src={logoUrl || defaultLogoUrl}
+              alt="Logo"
+              className="w-full h-full object-contain"
+            />
           </div>
           <CardTitle className="text-2xl">MB Contabilidade</CardTitle>
           <CardDescription>Sistema Contábil Integrado</CardDescription>
