@@ -1,5 +1,5 @@
 import { Link, Outlet, useLocation } from 'react-router-dom'
-import { Home, Building2, Bell, Search, LogOut } from 'lucide-react'
+import { Home, Building2, Users, Bell, Search, LogOut } from 'lucide-react'
 import {
   SidebarProvider,
   Sidebar,
@@ -17,6 +17,7 @@ import { useAuth } from '@/hooks/use-auth'
 
 const navItems = [
   { path: '/', label: 'Dashboard', icon: Home },
+  { path: '/colaboradores', label: 'Colaboradores', icon: Users },
   { path: '/clientes', label: 'Clientes', icon: Building2 },
 ]
 

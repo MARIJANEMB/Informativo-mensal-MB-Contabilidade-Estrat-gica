@@ -10,6 +10,7 @@ import { ProtectedRoute } from './components/ProtectedRoute'
 import NotFound from './pages/NotFound'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
+import Employees from './pages/Employees'
 import Clients from './pages/Clients'
 import ClientProfile from './pages/ClientProfile'
 import MonthlyReport from './pages/MonthlyReport'
@@ -29,6 +30,14 @@ const App = () => (
                 element={
                   <ErrorBoundary>
                     <Dashboard />
+                  </ErrorBoundary>
+                }
+              />
+              <Route
+                path="/colaboradores"
+                element={
+                  <ErrorBoundary>
+                    <Employees />
                   </ErrorBoundary>
                 }
               />

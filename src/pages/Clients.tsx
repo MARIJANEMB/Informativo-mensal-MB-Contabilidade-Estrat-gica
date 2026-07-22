@@ -31,6 +31,7 @@ import {
 import { getAllTaxObligations, type TaxObligation } from '@/services/tax-obligations'
 import { useRealtime } from '@/hooks/use-realtime'
 import { useToast } from '@/hooks/use-toast'
+import { extractFieldErrors, type FieldErrors } from '@/lib/pocketbase/errors'
 
 export default function Clients() {
   const { toast } = useToast()
@@ -39,6 +40,7 @@ export default function Clients() {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editing, setEditing] = useState<Client | null>(null)
   const [form, setForm] = useState({ name: '', cnpj: '', contact_email: '', contact_phone: '' })
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const now = new Date()
 
   const loadData = useCallback(async () => {
@@ -78,17 +80,23 @@ export default function Clients() {
   }
 
   const handleSave = async () => {
+    setFieldErrors({})
     try {
       if (editing) await updateClient(editing.id, form)
       else await createClient(form)
       setDialogOpen(false)
       toast({ title: 'Sucesso', description: editing ? 'Cliente atualizado.' : 'Cliente criado.' })
     } catch (err: any) {
-      toast({
-        title: 'Erro',
-        description: err.message || 'Falha ao salvar.',
-        variant: 'destructive',
-      })
+      const errors = extractFieldErrors(err)
+      if (Object.keys(errors).length > 0) {
+        setFieldErrors(errors)
+      } else {
+        toast({
+          title: 'Erro',
+          description: err.message || 'Falha ao salvar.',
+          variant: 'destructive',
+        })
+      }
     }
   }
 
