@@ -1,0 +1,7 @@
+ID_Proposta,Cliente,Data_Proposta,Plano_Proposto,Valor_Mensal,Status,Data_Aceita,NPS_Score,CSAT_Score
+1,Comércio XYZ Eireli,2022-02-15,Estratégico T2,2500.00,Aceita,2022-03-15,9,10
+2,Construtora Visão Eireli,2023-05-20,Essencial T3,1800.00,Aceita,2023-06-10,8,9
+3,Serviços de Consultoria ABC,2024-01-05,Estratégico T1,3200.00,Aceita,2024-01-20,,
+4,Farmácia Popular Ltda,2021-10-15,Essencial T2,1200.00,Aceita,2021-11-05,5,6
+5,Instituto de Educação Moderna,2024-06-01,Essencial T1,1500.00,Aceita,2024-06-15,,
+6,Comércio XYZ Eireli,2026-07-01,Estratégico T3,3800.00,Em Discussão,,,

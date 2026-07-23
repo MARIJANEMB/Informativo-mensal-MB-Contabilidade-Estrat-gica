@@ -23,6 +23,15 @@ import ClientProfilePage from '@/modules/contabil/ClientProfilePage'
 import DocumentsPage from '@/modules/contabil/DocumentsPage'
 import ObligationsPage from '@/modules/fiscal/ObligationsPage'
 import ReportsPage from '@/modules/fiscal/ReportsPage'
+import KanbanPage from '@/modules/administrativo/KanbanPage'
+import TimelinePage from '@/modules/administrativo/TimelinePage'
+import AdminClientsPage from '@/modules/administrativo/AdminClientsPage'
+import PropostasPage from '@/modules/comercial/PropostasPage'
+import RentabilidadePage from '@/modules/financeiro/RentabilidadePage'
+import MarcaPage from '@/modules/configuracoes/MarcaPage'
+import NotificacoesPage from '@/modules/configuracoes/NotificacoesPage'
+import AutomacoesPage from '@/modules/configuracoes/AutomacoesPage'
+import ImportarPage from '@/modules/configuracoes/ImportarPage'
 
 const withBoundary = (element: React.ReactNode) => <ErrorBoundary>{element}</ErrorBoundary>
 
@@ -46,7 +55,6 @@ const App = () => (
                   {/* Painel Central */}
                   <Route path="/" element={withBoundary(<DashboardPage />)} />
                   <Route path="/painel" element={<Navigate to="/" replace />} />
-
                   {/* Administrativo */}
                   <Route path="/admin" element={<Navigate to="/admin/colaboradores" replace />} />
                   <Route
@@ -61,8 +69,28 @@ const App = () => (
                     path="/admin/configuracoes"
                     element={withModule('admin', <SettingsPage />)}
                   />
-
-                  {/* Contábil */}
+                  {/* Administrativo — Extended */}
+                  <Route
+                    path="/administrativo"
+                    element={<Navigate to="/administrativo/clientes" replace />}
+                  />
+                  <Route
+                    path="/administrativo/clientes"
+                    element={withModule('admin', <AdminClientsPage />)}
+                  />
+                  <Route
+                    path="/administrativo/clientes/:clientId"
+                    element={withModule('admin', <ClientProfilePage />)}
+                  />
+                  <Route
+                    path="/administrativo/kanban"
+                    element={withModule('admin', <KanbanPage />)}
+                  />
+                  <Route
+                    path="/administrativo/timeline"
+                    element={withModule('admin', <TimelinePage />)}
+                  />
+                  {/* Contábil */}{' '}
                   <Route path="/contabil" element={<Navigate to="/contabil/clientes" replace />} />
                   <Route
                     path="/contabil/clientes"
@@ -80,7 +108,6 @@ const App = () => (
                     path="/contabil/documentos"
                     element={withModule('contabil', <DocumentsPage />)}
                   />
-
                   {/* Fiscal */}
                   <Route path="/fiscal" element={<Navigate to="/fiscal/obrigacoes" replace />} />
                   <Route
@@ -95,8 +122,45 @@ const App = () => (
                     path="/fiscal/relatorios/:clientId"
                     element={withModule('fiscal', <MonthlyReport />)}
                   />
-
-                  {/* Backward compatibility redirects */}
+                  {/* Comercial / Financeiro */}
+                  <Route
+                    path="/comercial"
+                    element={<Navigate to="/comercial/propostas" replace />}
+                  />
+                  <Route
+                    path="/comercial/propostas"
+                    element={withModule('comercial', <PropostasPage />)}
+                  />
+                  <Route
+                    path="/financeiro"
+                    element={<Navigate to="/financeiro/rentabilidade" replace />}
+                  />
+                  <Route
+                    path="/financeiro/rentabilidade"
+                    element={withModule('financeiro', <RentabilidadePage />)}
+                  />
+                  {/* Configurações */}
+                  <Route
+                    path="/configuracoes"
+                    element={<Navigate to="/configuracoes/marca" replace />}
+                  />
+                  <Route
+                    path="/configuracoes/marca"
+                    element={withModule('configuracoes', <MarcaPage />)}
+                  />
+                  <Route
+                    path="/configuracoes/notificacoes"
+                    element={withModule('configuracoes', <NotificacoesPage />)}
+                  />
+                  <Route
+                    path="/configuracoes/automacoes"
+                    element={withModule('configuracoes', <AutomacoesPage />)}
+                  />
+                  <Route
+                    path="/configuracoes/importar"
+                    element={withModule('configuracoes', <ImportarPage />)}
+                  />
+                  {/* Backward compatibility redirects */}{' '}
                   <Route
                     path="/colaboradores"
                     element={<Navigate to="/admin/colaboradores" replace />}
@@ -111,9 +175,9 @@ const App = () => (
                     element={<ParamRedirect to="/contabil/clientes/:clientId/relatorio" />}
                   />
                   <Route
-                    path="/configuracoes"
-                    element={<Navigate to="/admin/configuracoes" replace />}
-                  />
+                    path="/admin/configuracoes-redirect"
+                    element={<Navigate to="/configuracoes/marca" replace />}
+                  />{' '}
                 </Route>
               </Route>
               <Route path="*" element={<NotFound />} />

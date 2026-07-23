@@ -15,6 +15,7 @@ import { getClient, type Client } from '@/services/clients'
 import { MonthlyDataForm } from '@/components/MonthlyDataForm'
 import { TaxObligationList } from '@/components/TaxObligationList'
 import { DocumentObligationList } from '@/components/DocumentObligationList'
+import { ClientProfitability } from '@/components/ClientProfitability'
 
 const MONTHS = [
   'Janeiro',
@@ -51,7 +52,8 @@ export default function ClientProfile() {
   return (
     <div className="space-y-6 animate-fade-in max-w-6xl mx-auto">
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" onClick={() => navigate('/clientes')}>
+        <Button variant="ghost" size="icon" onClick={() => navigate('/contabil/clientes')}>
+          {' '}
           <ArrowLeft className="w-5 h-5" />
         </Button>
         <div>
@@ -92,7 +94,9 @@ export default function ClientProfile() {
             </Select>
           </div>
           <Button
-            onClick={() => navigate(`/clientes/${clientId}/relatorio?month=${month}&year=${year}`)}
+            onClick={() =>
+              navigate(`/contabil/clientes/${clientId}/relatorio?month=${month}&year=${year}`)
+            }
           >
             <FileBarChart2 className="w-4 h-4 mr-2" /> Gerar Relatório do Mês
           </Button>
@@ -100,11 +104,12 @@ export default function ClientProfile() {
       </Card>
       <Tabs defaultValue="data">
         <TabsList>
-          <TabsTrigger value="data">Entradas</TabsTrigger>
+          <TabsTrigger value="data">Lançamentos Mensais</TabsTrigger>
           <TabsTrigger value="obligations">Obrigações Fiscais</TabsTrigger>
           <TabsTrigger value="documents">Documentos</TabsTrigger>
+          <TabsTrigger value="rentabilidade">Rentabilidade</TabsTrigger>
           <TabsTrigger value="reports">Relatórios</TabsTrigger>
-        </TabsList>
+        </TabsList>{' '}
         <TabsContent value="data" className="mt-6">
           <Card className="shadow-sm">
             <CardContent className="p-6">
@@ -136,7 +141,7 @@ export default function ClientProfile() {
               </p>
               <Button
                 onClick={() =>
-                  navigate(`/clientes/${clientId}/relatorio?month=${month}&year=${year}`)
+                  navigate(`/contabil/clientes/${clientId}/relatorio?month=${month}&year=${year}`)
                 }
               >
                 <FileBarChart2 className="w-4 h-4 mr-2" /> Gerar Relatório
@@ -144,7 +149,15 @@ export default function ClientProfile() {
             </CardContent>
           </Card>
         </TabsContent>
-      </Tabs>
+        <TabsContent value="rentabilidade" className="mt-6">
+          <Card className="shadow-sm">
+            <CardContent className="p-6">
+              <h3 className="font-semibold text-slate-800 mb-4">Rentabilidade Mensal</h3>
+              <ClientProfitability clientId={clientId!} />
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>{' '}
     </div>
   )
 }
