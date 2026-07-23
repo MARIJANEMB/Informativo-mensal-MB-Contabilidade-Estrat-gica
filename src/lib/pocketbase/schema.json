@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-23T00:28:23.425Z",
+  "generatedAt": "2026-07-23T00:54:06.443Z",
   "collections": [
     {
       "name": "users",
@@ -838,6 +838,416 @@
       "indexes": [
         "CREATE INDEX idx_faturamento_cliente ON faturamento_mensal (cliente)",
         "CREATE INDEX idx_faturamento_cliente_mes ON faturamento_mensal (cliente, ano, mes)"
+      ]
+    },
+    {
+      "name": "atendimento",
+      "type": "base",
+      "apiRules": {
+        "list": "@request.auth.id != ''",
+        "view": "@request.auth.id != ''",
+        "create": "@request.auth.id != ''",
+        "update": "@request.auth.id != ''",
+        "delete": "@request.auth.id != ''"
+      },
+      "fields": [
+        {
+          "name": "cliente",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "clients"
+        },
+        {
+          "name": "data_abertura",
+          "type": "date",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "categoria",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": [
+            "Dúvida Técnica",
+            "Problema Sistema",
+            "Orientação Tributária",
+            "Documentação",
+            "Cobrança",
+            "Solicitação",
+            "Reclamação",
+            "Outro"
+          ]
+        },
+        {
+          "name": "assunto",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "descricao",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "prioridade",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": ["Baixa", "Normal", "Alta", "Urgente"]
+        },
+        {
+          "name": "status",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": [
+            "Aberto",
+            "Em Atendimento",
+            "Aguardando Cliente",
+            "Resolvido",
+            "Fechado",
+            "Reaberto"
+          ]
+        },
+        {
+          "name": "responsavel",
+          "type": "relation",
+          "required": false,
+          "system": false,
+          "collectionRef": "employees"
+        },
+        {
+          "name": "data_resolucao",
+          "type": "date",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "tempo_resposta_horas",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "tempo_resolucao_horas",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "satisfacao_cliente",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "tags",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": [
+            "Urgente",
+            "Recorrente",
+            "Educação",
+            "Problema Sistema",
+            "Dúvida",
+            "Escalação"
+          ]
+        },
+        {
+          "name": "historico",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "anexos",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": [
+        "CREATE INDEX idx_atendimento_cliente ON atendimento (cliente)",
+        "CREATE INDEX idx_atendimento_status ON atendimento (status)",
+        "CREATE INDEX idx_atendimento_prioridade ON atendimento (prioridade)"
+      ]
+    },
+    {
+      "name": "sucesso_cliente",
+      "type": "base",
+      "apiRules": {
+        "list": "@request.auth.id != ''",
+        "view": "@request.auth.id != ''",
+        "create": "@request.auth.id != ''",
+        "update": "@request.auth.id != ''",
+        "delete": "@request.auth.id != ''"
+      },
+      "fields": [
+        {
+          "name": "cliente",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "clients"
+        },
+        {
+          "name": "customer_success_manager",
+          "type": "relation",
+          "required": false,
+          "system": false,
+          "collectionRef": "employees"
+        },
+        {
+          "name": "data_inicio_relacionamento",
+          "type": "date",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "status_onboarding",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": [
+            "Não Iniciado",
+            "Apresentação",
+            "Diagnóstico",
+            "Plano Aceito",
+            "Implementação",
+            "Completo"
+          ]
+        },
+        {
+          "name": "data_onboarding_concluido",
+          "type": "date",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "health_score",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "risco_churn",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": ["Baixo", "Médio", "Alto", "Crítico"]
+        },
+        {
+          "name": "data_ultima_checkin",
+          "type": "date",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "frequencia_checkin",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": ["Semanal", "Quinzenal", "Mensal", "Trimestral"]
+        },
+        {
+          "name": "tickets_abertos",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "tempo_medio_resolucao_horas",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "nps_score",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "csat_score",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "utiliza_todos_servicos",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": ["Sim", "Não", "Parcialmente"]
+        },
+        {
+          "name": "oportunidades_upsell",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": [
+            "Upgrade",
+            "BPO",
+            "Consultoria",
+            "Planejamento Tributário",
+            "Dev Liderança",
+            "Diagnóstico"
+          ]
+        },
+        {
+          "name": "data_proximo_revisar_contrato",
+          "type": "date",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "notas_cs",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": [
+        "CREATE UNIQUE INDEX idx_sucesso_cliente_cliente ON sucesso_cliente (cliente)",
+        "CREATE INDEX idx_sucesso_cliente_health_score ON sucesso_cliente (health_score)",
+        "CREATE INDEX idx_sucesso_cliente_risco_churn ON sucesso_cliente (risco_churn)"
+      ]
+    },
+    {
+      "name": "checkins",
+      "type": "base",
+      "apiRules": {
+        "list": "@request.auth.id != ''",
+        "view": "@request.auth.id != ''",
+        "create": "@request.auth.id != ''",
+        "update": "@request.auth.id != ''",
+        "delete": "@request.auth.id != ''"
+      },
+      "fields": [
+        {
+          "name": "cliente",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "clients"
+        },
+        {
+          "name": "data_da_reuniao",
+          "type": "date",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "tipo_checkin",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": [
+            "Check-in Regular",
+            "Revisão de Resultados",
+            "Planejamento Estratégico",
+            "Satisfação/Feedback",
+            "Resolução de Problema",
+            "Upsell Discussion"
+          ]
+        },
+        {
+          "name": "participantes_mb",
+          "type": "relation",
+          "required": false,
+          "system": false,
+          "collectionRef": "employees"
+        },
+        {
+          "name": "assuntos_abordados",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": [
+            "Resultados Financeiros",
+            "Tarefas/Pendências",
+            "Satisfação",
+            "Oportunidades",
+            "Upsell",
+            "Problemas",
+            "Roadmap"
+          ]
+        },
+        {
+          "name": "feedback_cliente",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "acao_seguimento",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "proximo_checkin_agendado",
+          "type": "date",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "satisfacao_checkin",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": [
+        "CREATE INDEX idx_checkins_cliente ON checkins (cliente)",
+        "CREATE INDEX idx_checkins_data_da_reuniao ON checkins (data_da_reuniao)"
       ]
     }
   ]

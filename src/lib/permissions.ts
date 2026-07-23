@@ -5,3 +5,5 @@ export type ModuleName =
   | 'comercial'
   | 'financeiro'
   | 'configuracoes'
+  | 'atendimento'
+  | 'sucesso'
