@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-22T23:05:51.413Z",
+  "generatedAt": "2026-07-22T23:57:07.924Z",
   "collections": [
     {
       "name": "users",
@@ -99,6 +99,112 @@
           "required": false,
           "system": false,
           "autodateTriggers": ["onCreate", "onUpdate"]
+        },
+        {
+          "name": "data_inicio",
+          "type": "date",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "regime_tributario",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": ["Simples Nacional", "Lucro Presumido", "Lucro Real"]
+        },
+        {
+          "name": "plano_contratado",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": [
+            "Essencial T1",
+            "Essencial T2",
+            "Essencial T3",
+            "Estratégico T1",
+            "Estratégico T2",
+            "Estratégico T3"
+          ]
+        },
+        {
+          "name": "valor_mensal",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "status",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": ["Ativo", "Inativo", "Cancelado", "Diagnosticado"]
+        },
+        {
+          "name": "contato_principal",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "celular",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "email",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "email_secundario",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "endereco",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "responsavel_mb",
+          "type": "relation",
+          "required": false,
+          "system": false,
+          "collectionRef": "employees"
+        },
+        {
+          "name": "tags",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": [
+            "Comércio",
+            "Serviços",
+            "Imobiliária",
+            "Saúde",
+            "Educação",
+            "Alto Potencial Upsell",
+            "Churn Risk",
+            "VIP",
+            "Satisfação Baixa"
+          ]
+        },
+        {
+          "name": "ultima_interacao",
+          "type": "date",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "notas",
+          "type": "text",
+          "required": false,
+          "system": false
         }
       ],
       "indexes": ["CREATE UNIQUE INDEX idx_clients_cnpj ON clients (cnpj) WHERE cnpj != ''"]
@@ -424,9 +530,315 @@
           "required": false,
           "system": false,
           "autodateTriggers": ["onCreate", "onUpdate"]
+        },
+        {
+          "name": "notification_email",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "slack_webhook_url",
+          "type": "text",
+          "required": false,
+          "system": false
         }
       ],
       "indexes": []
+    },
+    {
+      "name": "tarefas",
+      "type": "base",
+      "apiRules": {
+        "list": "@request.auth.id != ''",
+        "view": "@request.auth.id != ''",
+        "create": "@request.auth.id != ''",
+        "update": "@request.auth.id != ''",
+        "delete": "@request.auth.id != ''"
+      },
+      "fields": [
+        {
+          "name": "cliente",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "clients"
+        },
+        {
+          "name": "tipo",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": [
+            "Livro Caixa",
+            "Documentação Fiscal",
+            "Declaração (IR/IRPJ)",
+            "Reunião de Resultados",
+            "NPS Survey",
+            "Regularização",
+            "Outra"
+          ]
+        },
+        {
+          "name": "descricao",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "data_vencimento",
+          "type": "date",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "status",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": [
+            "Não Iniciada",
+            "Em Andamento",
+            "Aguardando Cliente",
+            "Concluída",
+            "Atrasada"
+          ]
+        },
+        {
+          "name": "responsavel",
+          "type": "relation",
+          "required": false,
+          "system": false,
+          "collectionRef": "employees"
+        },
+        {
+          "name": "documentos_necessarios",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": [
+            "Comprovante de Renda",
+            "Nota Fiscal",
+            "Recibo",
+            "Demonstrativo Bancário",
+            "Contrato",
+            "Outro"
+          ]
+        },
+        {
+          "name": "arquivos",
+          "type": "file",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "historico",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": [
+        "CREATE INDEX idx_tarefas_cliente ON tarefas (cliente)",
+        "CREATE INDEX idx_tarefas_status ON tarefas (status)",
+        "CREATE INDEX idx_tarefas_data_vencimento ON tarefas (data_vencimento)",
+        "CREATE INDEX idx_tarefas_responsavel ON tarefas (responsavel)"
+      ]
+    },
+    {
+      "name": "propostas",
+      "type": "base",
+      "apiRules": {
+        "list": "@request.auth.id != ''",
+        "view": "@request.auth.id != ''",
+        "create": "@request.auth.id != ''",
+        "update": "@request.auth.id != ''",
+        "delete": "@request.auth.id != ''"
+      },
+      "fields": [
+        {
+          "name": "cliente",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "clients"
+        },
+        {
+          "name": "data_proposta",
+          "type": "date",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "plano_proposto",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": [
+            "Essencial T1",
+            "Essencial T2",
+            "Essencial T3",
+            "Estratégico T1",
+            "Estratégico T2",
+            "Estratégico T3"
+          ]
+        },
+        {
+          "name": "valor_mensal",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "status",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": ["Enviada", "Em Discussão", "Aceita", "Recusada", "Vencida"]
+        },
+        {
+          "name": "data_aceita",
+          "type": "date",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "nps_score",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "csat_score",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": [
+        "CREATE INDEX idx_propostas_cliente ON propostas (cliente)",
+        "CREATE INDEX idx_propostas_status ON propostas (status)"
+      ]
+    },
+    {
+      "name": "faturamento_mensal",
+      "type": "base",
+      "apiRules": {
+        "list": "@request.auth.id != ''",
+        "view": "@request.auth.id != ''",
+        "create": "@request.auth.id != ''",
+        "update": "@request.auth.id != ''",
+        "delete": "@request.auth.id != ''"
+      },
+      "fields": [
+        {
+          "name": "cliente",
+          "type": "relation",
+          "required": true,
+          "system": false,
+          "collectionRef": "clients"
+        },
+        {
+          "name": "mes",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "ano",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "receita",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "custos_variaveis",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "custos_operacao",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "margem_bruta",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "margem_operacional",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "margem_liquida",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "margem_percentual",
+          "type": "number",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": [
+        "CREATE INDEX idx_faturamento_cliente ON faturamento_mensal (cliente)",
+        "CREATE INDEX idx_faturamento_cliente_mes ON faturamento_mensal (cliente, ano, mes)"
+      ]
     }
   ]
 }

@@ -1,48 +1,48 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
-import { Settings, getSettings, getFileUrl } from '@/services/settings'
-import { useRealtime } from '@/hooks/use-realtime'
+import { getSettings, type AppSettings } from '@/services/settings'
 
 interface SettingsContextType {
-  settings: Settings | null
+  settings: AppSettings | null
   logoUrl: string | null
-  loading: boolean
+  notificationEmail: string
+  slackWebhookUrl: string
+  refresh: () => void
 }
 
-const SettingsContext = createContext<SettingsContextType>({
-  settings: null,
-  logoUrl: null,
-  loading: true,
-})
+const SettingsContext = createContext<SettingsContextType | undefined>(undefined)
 
-export const useSettings = () => useContext(SettingsContext)
+export const useSettings = () => {
+  const ctx = useContext(SettingsContext)
+  if (!ctx) throw new Error('useSettings must be used within SettingsProvider')
+  return ctx
+}
 
 export const SettingsProvider = ({ children }: { children: ReactNode }) => {
-  const [settings, setSettings] = useState<Settings | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [settings, setSettings] = useState<AppSettings | null>(null)
 
   const load = async () => {
-    try {
-      const s = await getSettings()
-      setSettings(s)
-    } catch {
-      setSettings(null)
-    } finally {
-      setLoading(false)
-    }
+    const s = await getSettings()
+    setSettings(s)
   }
 
   useEffect(() => {
     load()
   }, [])
 
-  useRealtime('settings', () => {
-    load()
-  })
-
-  const logoUrl = settings?.logo ? getFileUrl(settings.id, settings.logo) : null
+  const logoUrl = settings?.logo
+    ? `${import.meta.env.VITE_POCKETBASE_URL}/api/files/settings/${settings.id}/${settings.logo}`
+    : null
 
   return (
-    <SettingsContext.Provider value={{ settings, logoUrl, loading }}>
+    <SettingsContext.Provider
+      value={{
+        settings,
+        logoUrl,
+        notificationEmail: settings?.notification_email || '',
+        slackWebhookUrl: settings?.slack_webhook_url || '',
+        refresh: load,
+      }}
+    >
       {children}
     </SettingsContext.Provider>
   )

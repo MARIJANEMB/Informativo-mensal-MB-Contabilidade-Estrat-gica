@@ -1,26 +1,30 @@
 import pb from '@/lib/pocketbase/client'
 
-export interface Settings {
+export interface AppSettings {
   id: string
   logo: string
   brand_guide: string
-  created: string
-  updated: string
+  notification_email: string
+  slack_webhook_url: string
 }
 
-export const getSettings = async () => {
-  const list = await pb.collection('settings').getFullList<Settings>({ requestKey: null })
-  return list[0] || null
-}
-
-export const upsertSettings = async (id: string | null, data: FormData) => {
-  if (id) {
-    return pb.collection('settings').update<Settings>(id, data)
-  } else {
-    return pb.collection('settings').create<Settings>(data)
+export const getSettings = async (): Promise<AppSettings | null> => {
+  try {
+    const list = await pb.collection('settings').getList(1, 1)
+    return (list.items[0] as unknown as AppSettings) || null
+  } catch {
+    return null
   }
 }
 
-export const getFileUrl = (recordId: string, filename: string) => {
-  return `${import.meta.env.VITE_POCKETBASE_URL}/api/files/settings/${recordId}/${filename}`
-}
+export const updateSettings = (id: string, data: FormData | Partial<AppSettings>) =>
+  pb.collection('settings').update(id, data)
+
+export const createSettings = (data: FormData | Partial<AppSettings>) =>
+  pb.collection('settings').create(data)
+
+export const upsertSettings = (id: string | null, data: FormData | Partial<AppSettings>) =>
+  id ? updateSettings(id, data) : createSettings(data)
+
+export const getFileUrl = (id: string, filename: string) =>
+  `${import.meta.env.VITE_POCKETBASE_URL}/api/files/settings/${id}/${filename}`

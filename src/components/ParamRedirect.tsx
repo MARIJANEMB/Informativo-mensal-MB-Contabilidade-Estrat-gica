@@ -1,7 +1,14 @@
-import { useParams, Navigate } from 'react-router-dom'
+import { Navigate, useParams } from 'react-router-dom'
 
-export function ParamRedirect({ to }: { to: string }) {
+interface ParamRedirectProps {
+  to: string
+}
+
+export function ParamRedirect({ to }: ParamRedirectProps) {
   const params = useParams()
-  const path = Object.keys(params).reduce((p, key) => p.replace(`:${key}`, params[key] || ''), to)
-  return <Navigate to={path} replace />
+  let target = to
+  for (const [key, value] of Object.entries(params)) {
+    if (value) target = target.replace(`:${key}`, value)
+  }
+  return <Navigate to={target} replace />
 }
